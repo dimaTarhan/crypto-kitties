@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Examine the text in the response
                 response.json().then(function(data) {
                     document.querySelector(".kitties-wrapper").innerHTML = contentRender(data.cats);
+                    document.querySelector(".loader").classList.toggle("hidden");
                 });
             }
         )
@@ -161,16 +162,17 @@ document.addEventListener("DOMContentLoaded", function () {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-
+    let anim_delay = 0;
     function createKitti(kitti) {
         let kittiPprice = kitti.price;
         let imageAdress = kitti.img_url;
         let kittiName = kitti.name;
         let kittiId = kitti.id;
         let kittiCategory = kitti.category;
+        anim_delay += 0.1;
 
         return `
-                <div class="kitti">
+                <div class="kitti" style="animation-delay: ${anim_delay}s">
                     <div class="kitti-card" style="background-color: ${bg_color[getRandomInt(0, bg_color.length-1)]}">
                         <div class="kitti-card__price">
                             <span>For sale = ${kittiPprice}$</span>
