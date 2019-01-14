@@ -1,0 +1,76 @@
+.kitties-wrapper {
+  width: 1200px;
+  margin: 0 auto;
+  padding-top: 50px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.kitti {
+  width: 260px;
+  height: 500px;
+  padding: 10px 20px;
+}
+
+.kitti-card__price {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.kitti-card__price span {
+  padding: 5px 15px;
+  background-color: beige;
+  border-radius: 10px;
+}
+
+.kitti-card__name {
+  text-transform: uppercase;
+}
+
+.kitti-card {
+  background-color: bisque;
+  text-align: center;
+  border-radius: 20px;
+  padding-top: 30px;
+}
+
+.kitti-card__name {
+  padding-bottom: 20px;
+}
+
+.kitti__info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-top: 10px;
+}
+
+.kitti-info__id {
+  padding-right: 30px;
+  border-right: 2px solid black;
+}
+
+.kitti-info__category {
+  margin-left: 30px;
+}
