@@ -13,7 +13,7 @@
   height: 500px;
   padding: 10px 20px;
   opacity: 0;
-  //animation: kittiAnimation 0.4s ease-in-out forwards;
+  animation: kittiAnimation 0.4s ease-in-out forwards;
 }
 
 .kitti-card__price{
@@ -60,7 +60,7 @@
 
 .loader{
   position: fixed;
-  top: calc(50% - 50px);
+  top: calc(50% - 52px);
   left: calc(50% - 50px);
 }
 
