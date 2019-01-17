@@ -1,7 +1,7 @@
 .kitties-wrapper {
   width: 1200px;
   margin: 0 auto;
-  padding-top: 50px;
+  padding-top: 20px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -18,7 +18,7 @@
 
 .kitti {
   width: 260px;
-  height: 500px;
+  margin-bottom: 30px;
   padding: 10px 20px;
   opacity: 0;
   -webkit-animation: kittiAnimation 0.4s ease-in-out forwards;
