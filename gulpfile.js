@@ -12,6 +12,7 @@ const pugBlob = 'src/*.pug';
 const imagesBlob = 'src/images/**';
 const stylesBlob = 'src/sass/*.scss';
 const jsBlob = 'src/js/*.js';
+const cssBlob ='src/sass/*.css';
 
 gulp.task('default', function () {
     return runSequence('build', 'serve');
@@ -20,7 +21,7 @@ gulp.task('default', function () {
 gulp.task('build', function () {
     return runSequence(
         'cleanDist',
-        ['processStyles', 'processHtml', 'processImages', 'processJs']
+        ['processStyles', 'processHtml', 'processImages', 'processJs', 'processCSSstyle']
     );
 });
 
@@ -37,6 +38,10 @@ gulp.task('serve', function () {
 
     gulp.watch(imagesBlob, function () {
         return runSequence('processImages', 'reloadBrowser');
+    });
+
+    gulp.watch(cssBlob, function () {
+        return runSequence('processCSSstyle', 'reloadBrowser');
     });
 
     gulp.watch(stylesBlob, function () {
@@ -66,6 +71,11 @@ gulp.task('processHtml', function () {
 gulp.task('processImages', function () {
     return gulp.src(imagesBlob)
         .pipe(gulp.dest('dist/images/'));
+});
+
+gulp.task('processCSSstyle', function () {
+    return gulp.src(cssBlob)
+        .pipe(gulp.dest('dist/css/'));
 });
 
 gulp.task('processJs', function () {

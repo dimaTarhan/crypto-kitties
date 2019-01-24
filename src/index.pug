@@ -4,7 +4,70 @@ html(lang='en')
         meta(charset="UTF-8")
         title Crypto Kitties
         link(rel="stylesheet" href="css/style.css")
+        link(rel="stylesheet" href="css/da-library.css")
+        link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
         script(src="js/script.js")
     body
-        .kitties-wrapper
-        img.loader(src="images/loader.gif" alt="" width="100px")
+    .kitties-options
+        .kitties-options__search-line
+            .kitties-options__search
+                .material-icons search
+                input(type="text" placeholder="Search")
+                .kitties-options__search-options.hidden
+                    span Submit
+                    span Cancel
+                .kitties-options__filters-link
+                    span filters
+                    .material-icons filter_list
+        .kitties-options__search-area.hidden
+            span View all searchable tags
+        .kitties-options__filter-option.hidden
+            .kitties-options__filter-option_name Cooldown:
+            span Fast
+            span Swift
+            span Snappy
+            span Brisk
+            span Plodding
+            span Slow
+            span Sluggish
+            span Catatonic
+        .kitties-options__sort-line
+            .kitties-options__check
+                input(class="da-checkbox" id="sale" type="checkbox" name="checkFirst" value="sale" checked)
+                label(class="da-checkbox-label" for="sale")
+                    span.da-checkbox__logo
+                        svg(width="10px" height="10px" viewBox="1 5 12 10")
+                            polyline(points="1.5 6 4.5 9 10.5 1")
+                    span(class="da-checkbox__title") for sale
+
+                input(class="da-checkbox" id="siring" type="checkbox" name="checkSecond" value="sire")
+                label(class="da-checkbox-label" for="siring")
+                    span.da-checkbox__logo
+                        svg(width="10px" height="10px" viewBox="1 5 12 10")
+                            polyline(points="1.5 6 4.5 9 10.5 1")
+                    span(class="da-checkbox__title") siring
+
+                input(class="da-checkbox" id="other" type="checkbox" name="checkThird" value="other")
+                label(class="da-checkbox-label" for="other")
+                    span.da-checkbox__logo
+                        svg(width="10px" height="10px" viewBox="1 5 12 10")
+                            polyline(points="1.5 6 4.5 9 10.5 1")
+                    span(class="da-checkbox__title") other
+            .kitties-options__sort
+                label(for="kitties-options__sort-select") sort by:
+                select#kitties-options__sort-select
+                    option(value="current_price") price
+                    option(value="id") age
+                    option(value="generation") gen
+                    option(value="cooldown") cooldown
+                    option(value="purr_count") like
+
+                .kitties-options__sort-button
+                    button low to high
+                    .material-icons swap_vert
+
+    .kitties-wrapper
+    img.loader(src="images/loader.gif" alt="" width="100px")
+    .page-navigation
+        span.page-navigation__prev.disabled Previous
+        span.page-navigation__next Next

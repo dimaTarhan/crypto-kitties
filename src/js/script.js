@@ -1,151 +1,152 @@
 document.addEventListener("DOMContentLoaded", function () {
+    let anim_delay;
+    let pageOffset = 0;
+    let pageLimit = 12;
+    let pageInclude = "sale";
+    let pageOrderBy = "current_price";
+    let pageOrderDirection = "asc";
 
-    fetch('https://ma-cats-api.herokuapp.com/api/cats?per_page=12')
-        .then(
-            function(response) {
-                if (response.status !== 200) {
-                    console.log('Looks like there was a problem. Status Code: ' +
-                        response.status);
-                    return;
+    function getCats(url) {
+        fetch(url)
+            .then(
+                function(response) {
+                    if (response.status !== 200) {
+                        console.log('Looks like there was a problem. Status Code: ' +
+                            response.status);
+                        return;
+                    }
+
+                    // Examine the text in the response
+                    response.json().then(function(data) {
+                        console.log(data);
+                        document.querySelector(".kitties-wrapper").innerHTML = contentRender(data.kitties);
+                        document.querySelector(".loader").classList.toggle("hidden");
+                    });
+                }
+            )
+            .catch(function(err) {
+                console.log('Fetch Error :-S', err);
+            });
+    }
+
+    // function loader() {
+    //     document.querySelector(".loader").classList.toggle("hidden");
+    // }
+    //
+    // async function showCats(url) {
+    //     const cats = await getCats(url);
+    //     const awaitLoader = await loader();
+    // }
+
+    getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+
+
+    document.querySelector(".kitties-options__search input").addEventListener("focus", function () {
+        document.querySelector(".kitties-options__search-area").classList.toggle("hidden");
+        document.querySelector(".kitties-options__search-options").classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", function (e) {
+        if(e.target.closest(".kitties-options")) return;
+        document.querySelector(".kitties-options__search-area").classList.add("hidden");
+        document.querySelector(".kitties-options__search-options").classList.add("hidden");
+    });
+
+    document.querySelector(".kitties-options__filters-link").addEventListener("click", function () {
+        document.querySelector(".kitties-options__filter-option").classList.toggle("hidden");
+        document.querySelector(".kitties-options__filters-link .material-icons").classList.toggle("active-color");
+    });
+
+    function nextPage() {
+        document.querySelector(".page-navigation__prev").classList.remove("disabled");
+        pageOffset += 12;
+        document.querySelector(".loader").classList.toggle("hidden");
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+    }
+
+    function prevPage() {
+        if (pageOffset === 0) return;
+        pageOffset -= 12;
+        if (pageOffset === 0){
+            document.querySelector(".page-navigation__prev").classList.add("disabled");
+        }
+        document.querySelector(".loader").classList.toggle("hidden");
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+    }
+
+    document.querySelector("#kitties-options__sort-select").addEventListener("change", function () {
+        let getOptionsList = document.querySelector("#kitties-options__sort-select").options;
+        let getSelectedOption = document.querySelector("#kitties-options__sort-select").selectedIndex;
+        pageOrderBy = getOptionsList[getSelectedOption].value;
+        console.log(pageOrderBy);
+        document.querySelector(".loader").classList.toggle("hidden");
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+    });
+
+    document.querySelector(".kitties-options__check").addEventListener("click", function (e) {
+        let target = e.target;
+        if(this === target) return;
+        pageInclude = 0;
+        let checkCounter = 0;
+        if (target.matches("input")) {
+            let getAllInputs = document.querySelectorAll(".kitties-options__check input");
+            [...getAllInputs].forEach(function (check) {
+                if (check.checked && !pageInclude){
+                    pageInclude = check.value;
+                    checkCounter++;
+                } else if (check.checked && pageInclude){
+                    pageInclude += `,${check.value}`;
+                    checkCounter++;
                 }
 
-                // Examine the text in the response
-                response.json().then(function(data) {
-                    document.querySelector(".kitties-wrapper").innerHTML = contentRender(data.cats);
-                    document.querySelector(".loader").classList.toggle("hidden");
-                });
+                if (check.checked && target.value === "other"){
+                    document.querySelector("#kitties-options__sort-select").options[0].classList.toggle("hidden");
+                    document.querySelector("#kitties-options__sort-select").options.selectedIndex = 1;
+                    pageOrderBy = "age";
+                } else if (check.checked === false && target.value === "other"){
+                    document.querySelector("#kitties-options__sort-select").options[0].classList.toggle("hidden");
+                    document.querySelector("#kitties-options__sort-select").options.selectedIndex = 0;
+                    pageOrderBy = "current_price";
+                }
+            });
+            if (!checkCounter){
+                e.preventDefault();
+                return;
             }
-        )
-        .catch(function(err) {
-            console.log('Fetch Error :-S', err);
-        });
+            // console.log(pageInclude);
+            // if (pageInclude === 0){
+            //     document.querySelector(".kitties-options__check input").checked = true;
+            //     pageInclude = "sale";
+            // }
+            document.querySelector(".loader").classList.toggle("hidden");
+            getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        }
+        // if (target.matches("input")){
+        //     pageInclude = target.value;
+        //     // document.querySelector(".loader").classList.toggle("hidden");
+        //     // getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        // }
+    });
 
-    // const kittiesBase = [
-    //     {
-    //         "id": 1,
-    //         "name": "simon",
-    //         "category": "fast",
-    //         "price": 100,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495636.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.179Z",
-    //         "updated_at": "2018-02-06T23:08:49.179Z"
-    //     },
-    //     {
-    //         "id": 2,
-    //         "name": "felix",
-    //         "category": "fast",
-    //         "price": 10000,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495625.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.186Z",
-    //         "updated_at": "2018-02-06T23:08:49.186Z"
-    //     },
-    //     {
-    //         "id": 3,
-    //         "name": "luna",
-    //         "category": "slow",
-    //         "price": 2000,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495622.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.190Z",
-    //         "updated_at": "2018-02-06T23:08:49.190Z"
-    //     },
-    //     {
-    //         "id": 4,
-    //         "name": "oliver",
-    //         "category": "fast",
-    //         "price": 9000,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495619.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.193Z",
-    //         "updated_at": "2018-02-06T23:08:49.193Z"
-    //     },
-    //     {
-    //         "id": 5,
-    //         "name": "oreo",
-    //         "category": "middle",
-    //         "price": 100,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495616.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.197Z",
-    //         "updated_at": "2018-02-06T23:08:49.197Z"
-    //     },
-    //     {
-    //         "id": 6,
-    //         "name": "molly",
-    //         "category": "slow",
-    //         "price": 3000,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495613.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.201Z",
-    //         "updated_at": "2018-02-06T23:08:49.201Z"
-    //     },
-    //     {
-    //         "id": 7,
-    //         "name": "simba",
-    //         "category": "fast",
-    //         "price": 11000,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495592.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.205Z",
-    //         "updated_at": "2018-02-06T23:08:49.205Z"
-    //     },
-    //     {
-    //         "id": 8,
-    //         "name": "jack",
-    //         "category": "middle",
-    //         "price": 5000,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495579.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.209Z",
-    //         "updated_at": "2018-02-06T23:08:49.209Z"
-    //     },
-    //     {
-    //         "id": 10,
-    //         "name": "loki",
-    //         "category": "fast",
-    //         "price": 20000,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/336916.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.216Z",
-    //         "updated_at": "2018-02-06T23:08:49.216Z"
-    //     },
-    //     {
-    //         "id": 11,
-    //         "name": "milo",
-    //         "category": "slow",
-    //         "price": 3500,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/336916.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-06T23:08:49.220Z",
-    //         "updated_at": "2018-02-06T23:08:49.220Z"
-    //     },
-    //     {
-    //         "id": 13,
-    //         "name": "Homer",
-    //         "category": "sub-zero",
-    //         "price": 91233,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/117910.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-10T10:40:52.425Z",
-    //         "updated_at": "2018-02-10T10:40:52.425Z"
-    //     },
-    //     {
-    //         "id": 14,
-    //         "name": "Johnathon",
-    //         "category": "sub-zero",
-    //         "price": 55740,
-    //         "img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/1000.svg",
-    //         "available": true,
-    //         "created_at": "2018-02-10T10:40:52.437Z",
-    //         "updated_at": "2018-02-10T10:40:52.437Z"
-    //     }
-    // ];
+    document.querySelector(".page-navigation__next").addEventListener("click", nextPage);
+    document.querySelector(".page-navigation__prev").addEventListener("click", prevPage);
 
-    let bg_color = ["#d3e8ff", "#fae1ca", "#dbf0d0", "#dfdffa", "#ffe0e5", "#ede2f5", "#d1eeeb", "#eee9e8"];
+
+    const sortStatus = ["low to high", "high to low"];
+    const sortValues = ["asc", "desc"];
+    let sortCounter = 1;
+    document.querySelector(".kitties-options__sort-button").addEventListener("click", function () {
+        document.querySelector(".kitties-options__sort-button button").innerHTML = sortStatus[sortCounter % 2];
+        pageOrderDirection = sortValues[sortCounter % 2];
+        sortCounter++;
+        document.querySelector(".loader").classList.toggle("hidden");
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+    });
+
+    let bg_color = ["#D3E8FF", "#FDE9E4", "#CDF5D4", "#EFE1DA", "#ECF4E0", "#FAEEFA", "#EEE9E8", "#D9F5CB", "#DFDFFA", "#FAF4CF"];
 
     function contentRender(cats) {
+        anim_delay = 0;
         let kittiArr = cats.map(function (cat) {
             return createKitti(cat);
         });
@@ -161,30 +162,54 @@ document.addEventListener("DOMContentLoaded", function () {
     function getRandomInt(min, max){
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-
-    let anim_delay = 0;
+    
     function createKitti(kitti) {
-        let kittiPprice = kitti.price;
-        let imageAdress = kitti.img_url;
-        let kittiName = kitti.name;
+        let kittiPprice;
+        let aroundKittiPrice = (kitti.auction.current_price / 1000000000000000000).toFixed(4);
+        if (kitti.auction.current_price){
+            if (aroundKittiPrice < 0.0001){
+                kittiPprice = `<img src="https://www.cryptokitties.co/icons/eggplant.svg" alt="" width="18px" height="18px">
+                    <span>Wants to sire</span>`;
+            }else if (aroundKittiPrice > 99999){
+                kittiPprice = `<img src="https://www.cryptokitties.co/icons/tag.svg" alt="" width="18px" height="18px">
+                    <span>For sale = 99999+</span>`;
+            }else {kittiPprice = `<img src="https://www.cryptokitties.co/icons/tag.svg" alt="" width="18px" height="18px">
+                <span>For sale = ${aroundKittiPrice}</span>`;
+            }
+        } else {kittiPprice = `<img src="https://www.cryptokitties.co/icons/tag.svg" alt="" width="18px" height="18px">
+                <span>- - - - -</span>`;
+        }
+        let imageAdress = kitti.image_url;
+        let kittiName;
+        if (kitti.name){
+            kittiName = kitti.name;
+        } else {kittiName = "- - - - -"}
         let kittiId = kitti.id;
-        let kittiCategory = kitti.category;
+        let kittiCategory = function () {
+            let status = kitti.status.cooldown_index;
+            if(status < 2){return "Fast"}
+            else if (status < 3){return "Swift"}
+            else  if (status < 5){return "Snappy"}
+            else  if (status < 7){return "Brisk"}
+            else  if (status < 10){return "Plodding"}
+            else  if (status < 11){return "Slow"}
+            else  if (status < 13){return "Sluggish"}
+            else  if (status >= 13){return "Catatonic"}
+        };
         anim_delay += 0.1;
 
         return `
                 <div class="kitti" style="animation-delay: ${anim_delay}s">
-                    <div class="kitti-card" style="background-color: ${bg_color[getRandomInt(0, bg_color.length-1)]}">
-                        <div class="kitti-card__price">
-                            <span>For sale = ${kittiPprice}$</span>
-                        </div>
+                    <div class="kitti-card" style="background-color: ${bg_color[getRandomInt(0, bg_color.length - 1)]}">
+                        <div class="kitti-card__price">${kittiPprice}</div>
                         <div class="kitti-card__image">
-                            <img src=${imageAdress}>
+                            <img src=${imageAdress} width="250px">
                         </div>
                         <div class="kitti-card__name">${kittiName}</div>
                     </div>
                     <div class="kitti__info">
                         <div class="kitti-info__id">#${kittiId}</div>
-                        <div class="kitti-info__category">${kittiCategory}</div>
+                        <div class="kitti-info__category">${kittiCategory()}</div>
                     </div>
                 </div>`;
     }
