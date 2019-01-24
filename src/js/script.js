@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let pageInclude = "sale";
     let pageOrderBy = "current_price";
     let pageOrderDirection = "asc";
+    let pageSearch = "";
 
     function getCats(url) {
         fetch(url)
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     //     const awaitLoader = await loader();
     // }
 
-    getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+    getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
 
 
     document.querySelector(".kitties-options__search input").addEventListener("focus", function () {
@@ -57,11 +58,31 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector(".kitties-options__filters-link .material-icons").classList.toggle("active-color");
     });
 
+    document.querySelector(".kitties-options__filter-option").addEventListener("click", function (e) {
+        const target = e.target;
+        if (!target.closest("span"))return;
+        let getFilterOptions = document.querySelectorAll(".kitties-options__filter-option span");
+
+        if (!target.closest(".selectedFilter")){
+            [...getFilterOptions].forEach(function (option) {
+                option.classList.remove("selectedFilter");
+                target.classList.add("selectedFilter");
+            });
+            pageSearch = `&search=cooldown:${target.innerText.toLowerCase()}`;
+        } else {
+            target.classList.remove("selectedFilter");
+            pageSearch = "";
+        }
+
+        document.querySelector(".loader").classList.toggle("hidden");
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+    });
+
     function nextPage() {
         document.querySelector(".page-navigation__prev").classList.remove("disabled");
         pageOffset += 12;
         document.querySelector(".loader").classList.toggle("hidden");
-        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     }
 
     function prevPage() {
@@ -71,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector(".page-navigation__prev").classList.add("disabled");
         }
         document.querySelector(".loader").classList.toggle("hidden");
-        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     }
 
     document.querySelector("#kitties-options__sort-select").addEventListener("change", function () {
@@ -80,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
         pageOrderBy = getOptionsList[getSelectedOption].value;
         console.log(pageOrderBy);
         document.querySelector(".loader").classList.toggle("hidden");
-        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     });
 
     document.querySelector(".kitties-options__check").addEventListener("click", function (e) {
@@ -119,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
             //     pageInclude = "sale";
             // }
             document.querySelector(".loader").classList.toggle("hidden");
-            getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+            getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
         }
         // if (target.matches("input")){
         //     pageInclude = target.value;
@@ -140,10 +161,12 @@ document.addEventListener("DOMContentLoaded", function () {
         pageOrderDirection = sortValues[sortCounter % 2];
         sortCounter++;
         document.querySelector(".loader").classList.toggle("hidden");
-        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     });
 
-    let bg_color = ["#D3E8FF", "#FDE9E4", "#CDF5D4", "#EFE1DA", "#ECF4E0", "#FAEEFA", "#EEE9E8", "#D9F5CB", "#DFDFFA", "#FAF4CF"];
+    let bg_color = [
+        "#D3E8FF", "#FDE9E4", "#CDF5D4", "#EFE1DA", "#ECF4E0", "#FAEEFA", "#EEE9E8", "#D9F5CB", "#DFDFFA", "#FAF4CF"
+    ];
 
     function contentRender(cats) {
         anim_delay = 0;
