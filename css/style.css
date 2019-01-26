@@ -26,22 +26,32 @@
 }
 
 .kitti-card__price {
+  width: 70%;
+  margin: 0 auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: white;
+  border-radius: 10px;
 }
 
 .kitti-card__price span {
-  padding: 5px 15px;
-  background-color: beige;
-  border-radius: 10px;
+  padding: 5px 5px;
 }
 
 .kitti-card__name {
   text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 20px;
+  font-size: 16px;
 }
 
 .kitti-card {
@@ -84,10 +94,6 @@
   left: calc(50% - 50px);
 }
 
-.hidden {
-  display: none;
-}
-
 @-webkit-keyframes kittiAnimation {
   from {
     opacity: 0;
@@ -112,4 +118,256 @@
     -webkit-transform: none;
             transform: none;
   }
+}
+
+.page-navigation {
+  width: 1200px;
+  margin: 30px auto;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.page-navigation span {
+  margin-left: 20px;
+}
+
+.page-navigation span:hover {
+  color: hotpink;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+.kitties-options {
+  width: 1200px;
+  margin: 0 auto;
+  margin-top: 50px;
+  position: relative;
+}
+
+.kitties-options__search {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #E7E6E4;
+  color: #757575;
+  font-size: 18px;
+}
+
+.kitties-options__search:only-child {
+  height: 100%;
+}
+
+.kitties-options__search input {
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  width: calc(100% - 100px);
+  padding-left: 10px;
+}
+
+.kitties-options__search input:focus {
+  outline: none;
+}
+
+.kitties-options__search .kitties-options__search-options {
+  margin-left: auto;
+  margin-right: 20px;
+  padding-right: 10px;
+  border-right: 1px solid #E7E6E4;
+  line-height: 1;
+}
+
+.kitties-options__search span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.kitties-options__search .kitties-options__filters-link {
+  margin-left: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  cursor: pointer;
+}
+
+.kitties-options__search .kitties-options__filters-link span {
+  line-height: 1;
+}
+
+.kitties-options__search-area {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border: 2px solid #E7E6E4;
+  border-top: none;
+  border-bottom: 5px solid #E7E6E4;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  position: absolute;
+  z-index: 100;
+  background-color: white;
+}
+
+.kitties-options__search-area span {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  padding-left: 10px;
+  height: 40px;
+  border-top: 2px solid #E7E6E4;
+  color: #757575;
+  cursor: pointer;
+}
+
+.kitties-options__search-area span:hover {
+  color: black;
+}
+
+.kitties-options__filter-option {
+  margin-top: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.kitties-options__filter-option .kitties-options__filter-option_name {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.kitties-options__filter-option span {
+  border: 2px solid #E7E6E4;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin-left: 20px;
+  color: #757575;
+  padding: 4px 15px;
+  background-color: #E7E6E4;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.kitties-options__filter-option span:hover {
+  color: black;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+.hidden {
+  display: none;
+}
+
+.kitties-options__sort-line {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  margin-top: 20px;
+}
+
+.kitties-options__sort-line .kitties-options__sort {
+  font-weight: bold;
+  margin-left: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.kitties-options__sort-line .kitties-options__sort label {
+  color: #757575;
+}
+
+.kitties-options__sort-line .kitties-options__sort select {
+  cursor: pointer;
+  font-weight: bold;
+  margin-right: 20px;
+  margin-left: 10px;
+  border: none;
+}
+
+.kitties-options__sort-line .kitties-options__sort select:focus {
+  outline: none;
+}
+
+.kitties-options__sort-line .kitties-options__sort-button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  cursor: pointer;
+}
+
+.kitties-options__sort-line .kitties-options__sort-button button {
+  cursor: pointer;
+  font-weight: bold;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.active-color {
+  color: hotpink;
+}
+
+.da-checkbox-label {
+  color: #757575;
+  margin-right: 20px;
+}
+
+.da-checkbox-label:last-child {
+  margin-right: 0;
+}
+
+.da-checkbox:checked + .da-checkbox-label {
+  color: black;
+}
+
+.disabled {
+  color: #757575;
+}
+
+.disabled:hover {
+  color: #757575;
+}
+
+.selectedFilter {
+  background-color: white !important;
+  color: black !important;
 }
