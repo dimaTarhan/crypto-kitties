@@ -6,13 +6,17 @@ document.addEventListener("DOMContentLoaded", function () {
     let pageOrderBy = "current_price";
     let pageOrderDirection = "asc";
     let pageSearch = "";
+    let cattributesArr;
+    let cattributesSearch = "";
+    let searchFilter = "";
+    let inputDefaultValue = "";
 
     function getCats(url) {
         fetch(url)
             .then(
                 function(response) {
                     if (response.status !== 200) {
-                        console.log('Looks like there was a problem. Status Code: ' +
+                        console.error('Looks like there was a problem. Status Code: ' +
                             response.status);
                         return;
                     }
@@ -26,8 +30,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             )
             .catch(function(err) {
-                console.log('Fetch Error :-S', err);
+                console.error('Fetch Error :-S', err);
             });
+    }
+
+    //https://api.cryptokitties.co/cattributes?total=true
+    function getCattributes(url) {
+        fetch(url)
+            .then(
+                function(response) {
+                    if (response.status !== 200) {
+                        console.error('Looks like there was a problem. Status Code: ' +
+                            response.status);
+                        return;
+                    }
+
+                    // Examine the text in the response
+                    response.json().then(function(data) {
+                        cattributesArr = getCattributesArr(data);
+                    });
+                }
+            )
+            .catch(function(err) {
+                console.error('Fetch Error :-S', err);
+            });
+    }
+
+    function getCattributesArr(arr) {
+        return arr.map(function (cattribute) {
+            return cattribute.description;
+        })
     }
 
     // function loader() {
@@ -38,14 +70,51 @@ document.addEventListener("DOMContentLoaded", function () {
     //     const cats = await getCats(url);
     //     const awaitLoader = await loader();
     // }
-
-    getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+    getCattributes("https://api.cryptokitties.co/cattributes?total=true");
+    getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}${pageSearch}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
 
 
     document.querySelector(".kitties-options__search input").addEventListener("focus", function () {
-        document.querySelector(".kitties-options__search-area").classList.toggle("hidden");
-        document.querySelector(".kitties-options__search-options").classList.toggle("hidden");
+        document.querySelector(".kitties-options__search-area").classList.remove("hidden");
+        document.querySelector(".kitties-options__search-options").classList.remove("hidden");
     });
+    let inputString = "";
+    document.querySelector(".kitties-options__search input").addEventListener("input", function () {
+        document.querySelector(".kitties-options__search-serverElements").innerHTML = "";
+        let inputValue = document.querySelector(".kitties-options__search input").value;
+        if (!inputValue) return;
+        let reg = new RegExp('\^' + inputValue + '\\w+', `i`);
+        cattributesArr.forEach(function (cattribute) {
+            if(reg.test(cattribute) || inputValue === cattribute){
+                inputString += `<div class="search-server-value">${cattribute}</div>`
+            }
+        });
+        document.querySelector(".kitties-options__search-serverElements").innerHTML = inputString;
+        inputString = "";
+    });
+
+    document.querySelector(".kitties-options__search-serverElements").addEventListener("click", function (e) {
+        let target = e.target;
+        if(!target.closest(".search-server-value"))return;
+        let cattributeValue = target.innerText;
+        cattributesSearch = cattributeValue.toLowerCase();
+        document.querySelector(".kitties-options__search-area").classList.add("hidden");
+        document.querySelector(".kitties-options__search-options").classList.add("hidden");
+        if (searchFilter){
+            inputDefaultValue = `${cattributesSearch} cooldown:${searchFilter}`;
+            pageSearch = `&search=${cattributesSearch}+cooldown:${searchFilter}`;
+
+        }else {
+            inputDefaultValue = `${cattributesSearch}`;
+            pageSearch = `&search=${cattributesSearch}`;
+        }
+
+        document.querySelector(".kitties-options__search input").value = inputDefaultValue;
+        document.querySelector(".loader").classList.toggle("hidden");
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}${pageSearch}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+    });
+
+
 
     document.addEventListener("click", function (e) {
         if(e.target.closest(".kitties-options")) return;
@@ -68,21 +137,35 @@ document.addEventListener("DOMContentLoaded", function () {
                 option.classList.remove("selectedFilter");
                 target.classList.add("selectedFilter");
             });
-            pageSearch = `&search=cooldown:${target.innerText.toLowerCase()}`;
+            searchFilter = target.innerText.toLowerCase();
+            if (cattributesSearch){
+                inputDefaultValue = `${cattributesSearch} cooldown:${searchFilter}`;
+                pageSearch = `&search=${cattributesSearch}+cooldown:${searchFilter}`;
+            }else {
+                inputDefaultValue = `cooldown:${searchFilter}`;
+                pageSearch = `&search=cooldown:${searchFilter}`;
+            }
         } else {
             target.classList.remove("selectedFilter");
-            pageSearch = "";
+            if (cattributesSearch){
+                inputDefaultValue = `${cattributesSearch}`;
+                pageSearch = `&search=${cattributesSearch}`;
+            }else {
+                inputDefaultValue = ``;
+                pageSearch = ``;
+            }
         }
 
+        document.querySelector(".kitties-options__search input").value = inputDefaultValue;
         document.querySelector(".loader").classList.toggle("hidden");
-        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}${pageSearch}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     });
 
     function nextPage() {
         document.querySelector(".page-navigation__prev").classList.remove("disabled");
         pageOffset += 12;
         document.querySelector(".loader").classList.toggle("hidden");
-        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}${pageSearch}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     }
 
     function prevPage() {
@@ -92,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector(".page-navigation__prev").classList.add("disabled");
         }
         document.querySelector(".loader").classList.toggle("hidden");
-        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}${pageSearch}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     }
 
     document.querySelector("#kitties-options__sort-select").addEventListener("change", function () {
@@ -101,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
         pageOrderBy = getOptionsList[getSelectedOption].value;
         console.log(pageOrderBy);
         document.querySelector(".loader").classList.toggle("hidden");
-        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}${pageSearch}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     });
 
     document.querySelector(".kitties-options__check").addEventListener("click", function (e) {
@@ -140,13 +223,31 @@ document.addEventListener("DOMContentLoaded", function () {
             //     pageInclude = "sale";
             // }
             document.querySelector(".loader").classList.toggle("hidden");
-            getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+            getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}${pageSearch}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
         }
         // if (target.matches("input")){
         //     pageInclude = target.value;
         //     // document.querySelector(".loader").classList.toggle("hidden");
         //     // getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
         // }
+    });
+
+    document.querySelector(".kitties-options__search-options").addEventListener("click", function () {
+        if (!pageSearch) return;
+        document.querySelector(".kitties-options__search input").value = "";
+        pageSearch = ``;
+        cattributesSearch = "";
+        searchFilter = "";
+
+        document.querySelector(".kitties-options__search-area").classList.add("hidden");
+        document.querySelector(".kitties-options__search-options").classList.add("hidden");
+        document.querySelector(".kitties-options__search-serverElements").innerHTML = "";
+        [...document.querySelectorAll(".kitties-options__filter-option span")].forEach(function (filter_element) {
+            filter_element.classList.remove("selectedFilter");
+        });
+
+        document.querySelector(".loader").classList.toggle("hidden");
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}${pageSearch}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     });
 
     document.querySelector(".page-navigation__next").addEventListener("click", nextPage);
@@ -161,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
         pageOrderDirection = sortValues[sortCounter % 2];
         sortCounter++;
         document.querySelector(".loader").classList.toggle("hidden");
-        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}&parents=false&authenticated=false&include=${pageInclude}${pageSearch}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
+        getCats(`https://api.cryptokitties.co/v2/kitties?offset=${pageOffset}&limit=${pageLimit}${pageSearch}&parents=false&authenticated=false&include=${pageInclude}&orderBy=${pageOrderBy}&orderDirection=${pageOrderDirection}&total=true`);
     });
 
     let bg_color = [

@@ -163,6 +163,10 @@
   height: 100%;
 }
 
+.kitties-options__search .material-icons {
+  color: black;
+}
+
 .kitties-options__search input {
   border: none;
   font-size: 18px;
@@ -183,9 +187,18 @@
   line-height: 1;
 }
 
+.kitties-options__search .kitties-options__search-options span:hover {
+  color: black;
+  cursor: pointer;
+}
+
 .kitties-options__search span {
   font-weight: bold;
   margin-right: 10px;
+}
+
+.kitties-options__search span:hover {
+  color: black;
 }
 
 .kitties-options__search .kitties-options__filters-link {
@@ -370,4 +383,16 @@
 .selectedFilter {
   background-color: white !important;
   color: black !important;
+}
+
+.search-server-value {
+  font-weight: bold;
+  padding: 10px 0 10px 20px;
+  color: #757575;
+}
+
+.search-server-value:hover {
+  color: black;
+  background-color: #E7E6E4;
+  cursor: default;
 }
