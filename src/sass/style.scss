@@ -119,6 +119,11 @@
   &:only-child{
     height: 100%;
   }
+
+    .material-icons{
+      color: black;
+    };
+
     input{
       border: none;
       font-size: 18px;
@@ -136,11 +141,19 @@
       padding-right: 10px;
       border-right: 1px solid #E7E6E4;
       line-height: 1;
+
+      span:hover{
+        color: black;
+        cursor: pointer;
+      }
     }
 
     span{
       font-weight: bold;
       margin-right: 10px;
+      &:hover{
+        color: black;
+      }
     }
 
     .kitties-options__filters-link{
@@ -285,4 +298,17 @@
 .selectedFilter{
   background-color: white !important;
   color: black !important;
+}
+
+.search-server-value{
+  font-weight: bold;
+  //margin-left: 20px;
+  padding: 10px 0 10px 20px;
+  color: #757575;
+
+  &:hover{
+    color: black;
+    background-color: #E7E6E4;
+    cursor: default;
+  }
 }
